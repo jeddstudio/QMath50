@@ -11,8 +11,8 @@ $('#setForm').submit(function(e) {
     .done(function(data) {
 
     if (data.display_number) {
+//        $('#display_num_L').text(data.display_number).show();
         $('#display_num_R').text(data.display_number).show();
-        $('#display_num_L').text(data.display_number).show();
 //        $('#successAlert').hide();
         $("#setForm")[0].reset();
     }
@@ -45,7 +45,6 @@ $('#setForm').submit(function(e) {
 
 
 $(document).click(function(){
-
     $('.page-link').click(function(){
         $.ajax({
             url:'',
@@ -61,36 +60,4 @@ $(document).click(function(){
         })
     })
 })
-
-
-
-
-
-
-
-//$('a').on('click', function(e) {
-//    e.preventDefault();
-//
-//    var star = $(this).data('value');
-//
-//    $.ajax({
-//        url: '/game',
-//        type: 'POST',
-//        data: {star:star},
-//        success: function(data){
-//            $('.result').html(data);
-//        }
-//    });
-//});
-
-
-
-
-
-
-
-
-
-
-
 

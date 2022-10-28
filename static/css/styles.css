@@ -18,12 +18,15 @@ nav .navbar-brand
     font-size: xx-large;
 }
 
+
 .center{
     justify-content: center;
     color
 }
 
-
+#timeContainer {
+    margin: 1.5% 0;
+}
 
 /* User answer box hide Arrows */
 /* Chrome, Safari, Edge, Opera */
