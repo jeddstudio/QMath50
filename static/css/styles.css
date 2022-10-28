@@ -1,0 +1,85 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+
+.sidebar { height: 100vh;}
+
+
+a {
+    text-decoration:none;
+}
+
+
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+.center{
+    justify-content: center;
+    color
+}
+
+
+
+/* User answer box hide Arrows */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+.big_number {
+    margin: 1.5% 0;
+}
+
+.pagination > li > a, .pagination > li > span{
+     color:black !Important;
+}
+
+
+
+
+.App-module_game__NSc-J {
+    width: 100%;
+    max-width: var(--game-max-width);
+    margin: 0 auto;
+    height: calc(100% - var(--header-height));
+    display: flex;
+    flex-direction: column;
+}
+
+.Board-module_boardContainer__cKb-C {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.Board-module_board__lbzlf {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.Nav-module_navIcon__mgXpj {
+    padding-right: 8px;
+}
+
+
+.AppHeader-module_icon__x7b46 {
+    background: none;
+    border: none;
+}

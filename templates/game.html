@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Game
+{% endblock %}
+
+
+{% block main %}
+    <div>
+
+            <div class="App-module_game__NSc-J">
+                <div class="Board-module_boardContainer__cKb-C" style="overflow: unset;">
+                    <div>
+                        <h1 id="display_num_L" style="font-size:10vw">19</h1>
+                    </div>
+                    <div class="center">
+                        <h1 style="font-size:10vw">&nbsp; × &nbsp;</h1>
+                    </div>
+                    <div>
+                        <h1 id="display_num_R" style="font-size:10vw" >1</h1>
+                    </div>
+
+                </div>
+            </div>
+
+<!--         Number L Selector-->
+        <div class="number_L" style="big_number">
+            <nav aria-label="Page navigation example" id="displayNumber">
+              <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item"><a class="page-link" data-value="2" href="javascript:void(0);">2 × ?</a></li>
+                <li class="page-item"><a class="page-link" data-value="3" href="javascript:void(0);">3 × 3</a></li>
+                <li class="page-item"><a class="page-link" data-value="4" href="javascript:void(0);">4 × 4</a></li>
+                <li class="page-item"><a class="page-link" data-value="5" href="javascript:void(0);">5 × 5</a></li>
+                <li class="page-item"><a class="page-link" data-value="6" href="javascript:void(0);">6 × 6</a></li>
+                <li class="page-item"><a class="page-link" data-value="7" href="javascript:void(0);">7 × 7</a></li>
+                <li class="page-item"><a class="page-link" data-value="8" href="javascript:void(0);">8 × 8</a></li>
+                <li class="page-item"><a class="page-link" data-value="9" href="javascript:void(0);">9 × 9</a>
+              </ul>
+            </nav>
+        </div>
+
+
+    </div>
+        <p>
+            STOP WATCH 00:00:00
+        </p>
+
+        <p>
+            Answer check and Error report
+        </p>
+
+
+    <form id="setForm">
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="guess" type="number" autocomplete="off" autofocus>
+        </div>
+        <button class="btn btn-outline-dark" type="submit">Start</button>
+    </form>
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
