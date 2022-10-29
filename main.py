@@ -171,8 +171,6 @@ def game_index():
     num_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
 
-
-
     if request.args.get('number_L'):
         number_L = request.args.get('number_L')
         print()

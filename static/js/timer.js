@@ -24,7 +24,7 @@ let secs = 0;
 guessInput.addEventListener("keydown", () => {
     if(paused){
         console.log("test");
-        $(".page-link").attr("disabled",true);
+        $(".page-link").attr("disabled",true).css("pointer-events","none");
         paused = false;
         startTime = Date.now() - elapsedTime;
         intervalId = setInterval(updateTime, 1000);
