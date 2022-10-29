@@ -4,6 +4,11 @@ const pauseBtn = document.querySelector("#pauseBtn");
 const resetBtn = document.querySelector("#resetBtn");
 
 
+const guessInput = document.querySelector("#guess");
+
+const numBtnL = document.querySelector(".page-link")
+
+
 let startTime = 0;
 let elapsedTime = 0;
 let currentTime = 0;
@@ -13,31 +18,48 @@ let hrs = 0;
 let mins = 0;
 let secs = 0;
 
-startBtn.addEventListener("click", () => {
+
+
+
+guessInput.addEventListener("keydown", () => {
     if(paused){
+        console.log("test");
+        $(".page-link").attr("disabled",true);
         paused = false;
         startTime = Date.now() - elapsedTime;
         intervalId = setInterval(updateTime, 1000);
-    }
-});
-pauseBtn.addEventListener("click", () => {
-    if(!paused){
-        paused = true;
-        elapsedTime = Date.now() - startTime;
-        clearInterval(intervalId);
-    }
-});
-resetBtn.addEventListener("click", () => {
-    paused = true;
-    clearInterval(intervalId);
-    startTime = 0;
-    elapsedTime = 0;
-    currentTime = 0;
-    hrs = 0;
-    mins = 0;
-    secs = 0;
-    timeDisplay.textContent = "00:00:00";
-});
+    }    
+})
+
+
+// startBtn.addEventListener("click", () => {
+//     if(paused){
+//         console.log("test");
+//         paused = false;
+//         startTime = Date.now() - elapsedTime;
+//         intervalId = setInterval(updateTime, 1000);
+//     }
+// });
+
+
+// pauseBtn.addEventListener("click", () => {
+//     if(!paused){
+//         paused = true;
+//         elapsedTime = Date.now() - startTime;
+//         clearInterval(intervalId);
+//     }
+// });
+// resetBtn.addEventListener("click", () => {
+//     paused = true;
+//     clearInterval(intervalId);
+//     startTime = 0;
+//     elapsedTime = 0;
+//     currentTime = 0;
+//     hrs = 0;
+//     mins = 0;
+//     secs = 0;
+//     timeDisplay.textContent = "00:00:00";
+// });
 
 function updateTime(){
     elapsedTime = Date.now() - startTime;
@@ -56,3 +78,8 @@ function updateTime(){
         return (("0") + unit).length > 2 ? unit : "0" + unit;
     }
 }
+
+
+
+
+
