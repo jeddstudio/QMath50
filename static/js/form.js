@@ -56,6 +56,9 @@ $(document).click(function(){
             success: function(response){
                 $('.number_L').data('value')
                 $('#display_num_L').text(response.js_number_L)
+                // let the user input in input field
+                $("#guess").attr("disabled",false); 
+                $(".page-link").attr("disabled",true).css("pointer-events","none");
             }
         })
     })

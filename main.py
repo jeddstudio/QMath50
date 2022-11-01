@@ -31,6 +31,9 @@ db = SQL("sqlite:///qmath50.db")
 
 # at the top, the list needs to begin from 0 to start to count, so -1
 counter = -1
+# The Display number on the page, for calculation
+number_L = 1
+number_R = 1
 
 @app.after_request
 def after_request(response):
@@ -172,35 +175,53 @@ def game_index():
     random_list = random.sample(num_list, 9)
 
     if request.args.get('number_L'):
-        number_L = request.args.get('number_L')
+        global number_L
+
+        number_L = int(request.args.get('number_L'))
         print()
         print('number_L:', number_L)
         print(type(number_L))
         print()
         return jsonify({'js_number_L': number_L})
 
-
+    # When user input a number and press Enter
     if request.form.get('guess'):
-
+        
         guess = int(request.form['guess'])
-        print(f"getting low: {guess}")
+        print(f"getting guess: {guess}")
+        print(type(guess))
 
         if guess > 0:
             global counter
+            global number_R
+            print(f"b4 counter: {counter}")
 
             # prevent the list out of range
             if counter == 8:
-                # global counter
                 counter = -1
-
+                number_R = 1
+                return jsonify({'display_number': number_R})
                 print(counter)
             else:
-                counter += 1
-                print(f"counter{counter}")
-                num = num_list[counter]
-                number_R = (f"{num}")
+                answer = number_L * number_R
+                print("numL in guess", number_L, "*", number_R)
+                print("ans is:", answer)
 
-                return jsonify({'display_number': number_R})
+                if answer == guess:
+                    counter += 1
+                    number_R = num_list[counter]
+                    answer = number_L * number_R
+                    
+                    print(f"after counter: {counter}")
+                    # Refresh a new number to page
+                    return jsonify({'display_number': number_R})
+                else:
+                    pass
+
+
+                # number_R_Dsi = (f"{number_R}")
+
+                
 
         #     test = int(request.form['low'])
         #     return render_template("game.html", jinja_question=test)
