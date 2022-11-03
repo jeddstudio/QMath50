@@ -1,12 +1,13 @@
 const timeDisplay = document.querySelector("#timeDisplay");
 const startBtn = document.querySelector("#startBtn");
 const pauseBtn = document.querySelector("#pauseBtn");
-const resetBtn = document.querySelector("#resetBtn");
+// const resetBtn = document.querySelector("#resetBtn");
 
 
 const guessInput = document.querySelector("#guess");
 
 const numBtnL = document.querySelector(".page-link")
+
 
 
 let startTime = 0;
@@ -23,13 +24,18 @@ let secs = 0;
 
 guessInput.addEventListener("keydown", () => {
     if(paused){
-        console.log("test");
+        console.log("Keydown working");
         $(".page-link").attr("disabled",true).css("pointer-events","none");
         paused = false;
         startTime = Date.now() - elapsedTime;
         intervalId = setInterval(updateTime, 1000);
     }    
 })
+
+
+
+
+
 
 
 // startBtn.addEventListener("click", () => {
@@ -80,6 +86,17 @@ function updateTime(){
 }
 
 
+// function guessDone(){
+//     if(!paused){
+//         paused = true;
+//         elapsedTime = Date.now() - startTime;
+//         // clearInterval(intervalId);
+//     }
+// }
 
 
+// function resetPage(){
+//     $("#guess").attr("disabled",true); 
+//     $(".page-link").attr("disabled",false).css("pointer-events","none");
+// }
 

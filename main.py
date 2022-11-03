@@ -29,11 +29,14 @@ db = SQL("sqlite:///qmath50.db")
 # db_con = SQL.connect("qmath50.db")
 # db = db_con.cursor()
 
-# at the top, the list needs to begin from 0 to start to count, so -1
-counter = -1
+# at the top, cause webpage R_numb start with 1 already 
+# just needs to begin from 2 to start in the list, so set counter=1
+counter = 1
 # The Display number on the page, for calculation
 number_L = 1
 number_R = 1
+
+gameEnd = False
 
 @app.after_request
 def after_request(response):
@@ -171,66 +174,60 @@ def register():
 
 @app.route('/game', methods=['GET', 'POST'])
 def game_index():
-    num_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
 
+
+    # Get number_L from form.js
     if request.args.get('number_L'):
         global number_L
 
         number_L = int(request.args.get('number_L'))
         print()
         print('number_L:', number_L)
-        print(type(number_L))
         print()
         return jsonify({'js_number_L': number_L})
 
+
     # When user input a number and press Enter
+    # Get guess from form.js
     if request.form.get('guess'):
-        
+        global counter
+        global number_R
+        global gameEnd
+
+        print("Counter: ", counter, " Number_R: ", number_R)
+        print()
+        answer = number_L * number_R
         guess = int(request.form['guess'])
-        print(f"getting guess: {guess}")
-        print(type(guess))
+        print()
+        print(f"getting guess{type(guess)}: {guess}")
+        print()
 
-        if guess > 0:
-            global counter
-            global number_R
-            print(f"b4 counter: {counter}")
 
-            # prevent the list out of range
-            if counter == 8:
-                counter = -1
-                number_R = 1
-                return jsonify({'display_number': number_R})
-                print(counter)
-            else:
+
+        if answer == guess:
+            print("1", counter)
+            if counter < 10:
+                number_R = num_list[counter]
                 answer = number_L * number_R
-                print("numL in guess", number_L, "*", number_R)
-                print("ans is:", answer)
+                print("answer", answer)
+                counter += 1
+                print(counter)
+                # Refresh a new number to page
+                return jsonify({'js_display_number': number_R})
+            else:
+                gameEnd = True
+                counter = 1
+                number_R = 1
+                resetPage = "true"
+                message = "Finished! Your time is: "
+                gameEnd = False
+                print("8 counter is working",counter)
+                print("Retrun a value to JS")
+                return jsonify({'endGame': message})
+                # if the guess is wrong, just lets user keep guessing
 
-                if answer == guess:
-                    counter += 1
-                    number_R = num_list[counter]
-                    answer = number_L * number_R
-                    
-                    print(f"after counter: {counter}")
-                    # Refresh a new number to page
-                    return jsonify({'display_number': number_R})
-                else:
-                    pass
-
-
-                # number_R_Dsi = (f"{number_R}")
-
-                
-
-        #     test = int(request.form['low'])
-        #     return render_template("game.html", jinja_question=test)
-        # if low == 7:
-        #     Message = ("This is 7")
-        #     return jsonify({'inputError': Message})
-
-
-        # return jinja_question=question
 
 
     return render_template("game.html")
