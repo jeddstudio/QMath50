@@ -1,23 +1,13 @@
-
 // Variable for Stopwatch function
-const timeDisplay = document.querySelector("#timeDisplay");
-// const startBtn = document.querySelector("#startBtn");
-// const pauseBtn = document.querySelector("#pauseBtn");
-// const resetBtn = document.querySelector("#resetBtn");
+const appendMsSeconds = document.getElementById("ms_sec")
+const appendSeconds = document.getElementById("seconds")
 
+let seconds = 00; 
+let ms_seconds = 00; 
+let Interval;
 
+// Get input from HTML
 const guessInput = document.querySelector("#guess");
-
-// const numBtnL = document.querySelector(".page-link")
-
-let startTime = 0;
-let elapsedTime = 0;
-let currentTime = 0;
-let paused = true;
-let intervalId;
-let hrs = 0;
-let mins = 0;
-let secs = 0;
 
 
 // Ajax function
@@ -25,39 +15,39 @@ $('#setForm').submit(function(e) {
 
     $.ajax({
         data : {
-            guess : $('#guess').val()
+            js_guess : $('#guess').val(),
+            // seconds_time : $('#seconds').val(),
+            // tens_time : $('#ms_sec').val(),
         },
         type : 'POST',
         url : '/game'
 
     })
     // When user input a num then press Enter
-    // Right number change and clear the input field
     .done(function(data) {
         if (data.js_display_number) {
+            console.log("R_numb changing")
+            // Right number change and clear the input field
             $('#display_num_R').text(data.js_display_number).show();
+            // Clear the input field
             $("#setForm")[0].reset();
         }
-        // When user finished 1-10, Flask will pass a counter
-        // pause the stopwatch and show a message
+        // When user finished 1-10, will pass a counter from Flask
         if (data.endGame) {
             console.log("End Game")
             // show a message
             $('#GuessAlert').text(data.endGame).show();
             // pasuse the stopwatch
-            if(!paused){
-                paused = true;
-                elapsedTime = Date.now - startTime;
-                clearInterval(intervalId);
-            }
+            clearInterval(Interval);
         }        
         else {
+            // If the answer is wrong, Clear the input field
+            // lets user keep trying
             $("#setForm")[0].reset();
         }
 });
     e.preventDefault();
 });
-
 
 
 
@@ -73,42 +63,46 @@ $(document).click(function(){
             },
             success: function(response){
                 $('.number_L').data('value')
+                // Show num_L that the user choose on the webpage
                 $('#display_num_L').text(response.js_number_L)
-                // let the user input in input field
+                // Enable and let the user input in input field
                 $("#guess").attr("disabled",false); 
+                // Disable the L number selector
                 $(".page-link").attr("disabled",true).css("pointer-events","none");
             }
         })
     })
 })
 
-// Stopwatch Function with input and press Enter
+// START the Stopwatch Function with input and press Enter
 guessInput.addEventListener("keydown", () => {
-    if(paused){
-        console.log("Keydown working");
-        $(".page-link").attr("disabled",true).css("pointer-events","none");
-        paused = false;
-        startTime = Date.now() - elapsedTime;
-        intervalId = setInterval(updateTime, 1000);
-    }    
+    clearInterval(Interval);
+     Interval = setInterval(startTimer, 10);
+     console.log("TIMER START")
 })
 
+// Stopwatch Function
 // Display and counting the stopwatch on the webpage
-function updateTime(){
-    elapsedTime = Date.now() - startTime;
-
-    secs = Math.floor((elapsedTime / 1000) % 60);
-    mins = Math.floor((elapsedTime / (1000 * 60)) % 60);
-    hrs = Math.floor((elapsedTime / (1000 * 60 * 60)) % 60);
+function startTimer () {
+    ms_seconds++; 
     
-    secs = pad(secs);
-    mins = pad(mins);
-    hrs = pad(hrs);
-
-    timeDisplay.textContent = `${hrs}:${mins}:${secs}`;
-
-    function pad(unit){
-        return (("0") + unit).length > 2 ? unit : "0" + unit;
+    if(ms_seconds <= 9){
+        appendMsSeconds.innerHTML = "0" + ms_seconds;
     }
-}
-
+    
+    if (ms_seconds > 9){
+        appendMsSeconds.innerHTML = ms_seconds;
+    } 
+    
+    if (ms_seconds > 99) {
+      console.log("seconds");
+      seconds++;
+      appendSeconds.innerHTML = "0" + seconds;
+      ms_seconds = 0;
+      appendMsSeconds.innerHTML = "0" + 0;
+    }
+    
+    if (seconds > 9){
+      appendSeconds.innerHTML = seconds;
+    }
+  }

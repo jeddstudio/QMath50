@@ -183,26 +183,30 @@ def game_index():
         global number_L
 
         number_L = int(request.args.get('number_L'))
-        print()
-        print('number_L:', number_L)
-        print()
+        # print()
+        # print('number_L:', number_L)
+        # print()
         return jsonify({'js_number_L': number_L})
 
 
     # When user input a number and press Enter
     # Get guess from form.js
-    if request.form.get('guess'):
+    if request.form.get('js_guess'):
         global counter
         global number_R
         global gameEnd
 
-        print("Counter: ", counter, " Number_R: ", number_R)
-        print()
+        # print("Counter: ", counter, " Number_R: ", number_R)
+        # print()
         answer = number_L * number_R
-        guess = int(request.form['guess'])
-        print()
-        print(f"getting guess{type(guess)}: {guess}")
-        print()
+        guess = int(request.form['js_guess'])
+        # print()
+        # print('Question', number_L, "*", number_R)
+        # print()
+        # print("Answer", answer)
+        # print()
+        # print(f"getting guess{type(guess)}: {guess}")
+        # print()
 
 
 
@@ -211,9 +215,7 @@ def game_index():
             if counter < 10:
                 number_R = num_list[counter]
                 answer = number_L * number_R
-                print("answer", answer)
                 counter += 1
-                print(counter)
                 # Refresh a new number to page
                 return jsonify({'js_display_number': number_R})
             else:
@@ -223,11 +225,15 @@ def game_index():
                 resetPage = "true"
                 message = "Finished! Your time is: "
                 gameEnd = False
+                # total_time = request.form['seconds_time']
+                # print(total_time)
                 print("8 counter is working",counter)
                 print("Retrun a value to JS")
                 return jsonify({'endGame': message})
                 # if the guess is wrong, just lets user keep guessing
-
+        else:
+            print("Wrong: ", guess)
+            pass
 
 
     return render_template("game.html")

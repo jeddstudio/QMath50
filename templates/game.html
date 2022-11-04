@@ -40,19 +40,20 @@
         </div>
     </div>
 
-    <div id="timeContainer">
+    <!-- old_ver stopwatch -->
+    <!-- <div id="timeContainer">
         <div id="timeDisplay">00:00:00</div>
+    </div> -->
+
+    <div id="timeContainer">
+        <p><span id="seconds">00</span>:<span id="ms_sec">00</span></p>
     </div>
 
 
-<!--        <p>-->
-<!--            Answer check and Error report-->
-<!--        </p>-->
-
-
-<div id="GuessAlert" class="alert alert-success mt-3" role="alert" style="display:none;"></div>
-
-
+    <!-- Popup a message when complete -->
+    <div class="col-sm-12 mt-3">
+        <div id="GuessAlert" class="alert alert-dark" role="alert" style="display:none;"></div>
+    </div>
 
 
     <form id="setForm">
@@ -61,12 +62,6 @@
         </div>
         <!-- <button id="resetBtn" class="btn btn-outline-dark timerBtn">Reset</button> -->
     </form>
-
-
-<!-- update -->
-
-
-
 
 
 
