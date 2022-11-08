@@ -220,8 +220,6 @@ def game_index():
 
             message = (f"Finished! Your time is: {total_time} seconds")
             print("Stopwatch: ", total_time)
-
-            # print(ms_second, type(ms_second))
             return jsonify({'endGame': message})                
 
             # else counter < 10:
@@ -238,12 +236,11 @@ def game_index():
             print("Wrong: ", guess)
             pass
 
-
-
-
-
-
     return render_template("game.html")
+
+
+
+
 
 
 

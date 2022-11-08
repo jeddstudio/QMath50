@@ -1,26 +1,9 @@
-// // Variable for Stopwatch function
-// const appendMsSeconds = document.getElementById("ms_sec")
-// const appendSeconds = document.getElementById("seconds")
-
-
-
-// let seconds = 00; 
-// let ms_seconds = 00; 
-// let last_ms_seconds = document.getElementById("ms_sec").innerText;
-// let Interval;
-
-// // Get user input from HTML
-// const guessInput = document.querySelector("#guess");
-
-
 // Ajax function
 $('#setForm').submit(function(e) {
 
     $.ajax({
         data : {
             js_guess : $('#guess').val(),
-            // js_seconds : seconds,
-            // js_ms_seconds : document.getElementById("ms_sec").innerText
         },
         type : 'POST',
         url : '/game'
@@ -37,23 +20,19 @@ $('#setForm').submit(function(e) {
         }
         // When user finished 1-10, will pass a counter from Flask
         if (data.endGame) {
-            console.log("End Game")
+            console.log("Game end")
             // show a message
             $('#GuessAlert').text(data.endGame).show();
             // pasuse the stopwatch
             clearInterval(Interval);
-            // last_ms_seconds = document.getElementById("ms_sec").innerText;
-            // console.log(last_ms_seconds);
         }        
         else {
-            // If the answer is wrong, Clear the input field
-            // lets user keep trying
+            // If the answer is wrong, Clear the input field, lets user keep trying
             $("#setForm")[0].reset();
         }
 });
     e.preventDefault();
 });
-
 
 
 // L number selector
@@ -79,38 +58,3 @@ $(document).click(function(){
     })
 })
 
-
-// START the Stopwatch Function with input and press Enter
-guessInput.addEventListener("keypress", function (e) {
-    if (e.key === 'Enter') {
-        clearInterval(Interval);
-        Interval = setInterval(startTimer, 10);
-        console.log("TIMER START")
-    }
-})
-
-// Stopwatch Function
-// Display and counting the stopwatch on the webpage
-function startTimer () {
-    ms_seconds++; 
-    
-    if(ms_seconds <= 9){
-        appendMsSeconds.innerHTML = "0" + ms_seconds;
-    }
-    
-    if (ms_seconds > 9){
-        appendMsSeconds.innerHTML = ms_seconds;
-    } 
-    
-    if (ms_seconds > 99) {
-      console.log("seconds");
-      seconds++;
-      appendSeconds.innerHTML = "0" + seconds;
-      ms_seconds = 0;
-      appendMsSeconds.innerHTML = "0" + 0;
-    }
-    
-    if (seconds > 9){
-      appendSeconds.innerHTML = seconds;
-    }
-  }

@@ -24,9 +24,14 @@ nav .navbar-brand
     color
 }
 
-#timeContainer {
-    margin: 1.5% 0;
+#displayNumber_L {
+    margin: 2% 0 2%;
 }
+
+#GuessAlert {
+    margin: 2% 0 2%;
+}
+
 
 /* User answer box hide Arrows */
 /* Chrome, Safari, Edge, Opera */
