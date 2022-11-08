@@ -12,6 +12,8 @@ from helpers import apology, login_required
 
 import random
 
+import time
+
 # Configure application
 app = Flask(__name__)
 
@@ -36,7 +38,9 @@ counter = 1
 number_L = 1
 number_R = 1
 
-gameEnd = False
+
+start_time = 0
+end_time = 0
 
 @app.after_request
 def after_request(response):
@@ -183,9 +187,6 @@ def game_index():
         global number_L
 
         number_L = int(request.args.get('number_L'))
-        # print()
-        # print('number_L:', number_L)
-        # print()
         return jsonify({'js_number_L': number_L})
 
 
@@ -194,46 +195,52 @@ def game_index():
     if request.form.get('js_guess'):
         global counter
         global number_R
-        global gameEnd
+        global start_time
+        global end_time
 
-        # print("Counter: ", counter, " Number_R: ", number_R)
-        # print()
         answer = number_L * number_R
         guess = int(request.form['js_guess'])
-        # print()
-        # print('Question', number_L, "*", number_R)
-        # print()
-        # print("Answer", answer)
-        # print()
-        # print(f"getting guess{type(guess)}: {guess}")
-        # print()
 
+        # Save the start time when user input first answer
+        if counter == 1:
+            start_time = time.time()
+            print("START: ", start_time)
+        
 
+        # When the last answer is correct 
+        if answer == guess and counter == 10:
+            # Calculating Time
+            end_time = time.time()
+            print("END: ", end_time)
+            total_time = "{:.3f}".format((end_time - start_time))
+            print(f"time_lapsed:{end_time} - {start_time}")
+            # Reset the Global values
+            counter = 1
+            number_R = 1
 
-        if answer == guess:
-            print("1", counter)
-            if counter < 10:
-                number_R = num_list[counter]
-                answer = number_L * number_R
-                counter += 1
-                # Refresh a new number to page
-                return jsonify({'js_display_number': number_R})
-            else:
-                gameEnd = True
-                counter = 1
-                number_R = 1
-                resetPage = "true"
-                message = "Finished! Your time is: "
-                gameEnd = False
-                # total_time = request.form['seconds_time']
-                # print(total_time)
-                print("8 counter is working",counter)
-                print("Retrun a value to JS")
-                return jsonify({'endGame': message})
-                # if the guess is wrong, just lets user keep guessing
+            message = (f"Finished! Your time is: {total_time} seconds")
+            print("Stopwatch: ", total_time)
+
+            # print(ms_second, type(ms_second))
+            return jsonify({'endGame': message})                
+
+            # else counter < 10:
+        elif answer == guess and counter < 10:
+            number_R = num_list[counter]
+            answer = number_L * number_R
+            counter += 1
+            print(counter)
+            # Refresh a new number to page
+            return jsonify({'js_display_number': number_R})
+       
+        # if the guess is wrong, just lets user keep guessing
         else:
             print("Wrong: ", guess)
             pass
+
+
+
+
 
 
     return render_template("game.html")

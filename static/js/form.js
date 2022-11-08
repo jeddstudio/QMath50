@@ -1,13 +1,16 @@
-// Variable for Stopwatch function
-const appendMsSeconds = document.getElementById("ms_sec")
-const appendSeconds = document.getElementById("seconds")
+// // Variable for Stopwatch function
+// const appendMsSeconds = document.getElementById("ms_sec")
+// const appendSeconds = document.getElementById("seconds")
 
-let seconds = 00; 
-let ms_seconds = 00; 
-let Interval;
 
-// Get input from HTML
-const guessInput = document.querySelector("#guess");
+
+// let seconds = 00; 
+// let ms_seconds = 00; 
+// let last_ms_seconds = document.getElementById("ms_sec").innerText;
+// let Interval;
+
+// // Get user input from HTML
+// const guessInput = document.querySelector("#guess");
 
 
 // Ajax function
@@ -16,8 +19,8 @@ $('#setForm').submit(function(e) {
     $.ajax({
         data : {
             js_guess : $('#guess').val(),
-            // seconds_time : $('#seconds').val(),
-            // tens_time : $('#ms_sec').val(),
+            // js_seconds : seconds,
+            // js_ms_seconds : document.getElementById("ms_sec").innerText
         },
         type : 'POST',
         url : '/game'
@@ -39,6 +42,8 @@ $('#setForm').submit(function(e) {
             $('#GuessAlert').text(data.endGame).show();
             // pasuse the stopwatch
             clearInterval(Interval);
+            // last_ms_seconds = document.getElementById("ms_sec").innerText;
+            // console.log(last_ms_seconds);
         }        
         else {
             // If the answer is wrong, Clear the input field
@@ -74,11 +79,14 @@ $(document).click(function(){
     })
 })
 
+
 // START the Stopwatch Function with input and press Enter
-guessInput.addEventListener("keydown", () => {
-    clearInterval(Interval);
-     Interval = setInterval(startTimer, 10);
-     console.log("TIMER START")
+guessInput.addEventListener("keypress", function (e) {
+    if (e.key === 'Enter') {
+        clearInterval(Interval);
+        Interval = setInterval(startTimer, 10);
+        console.log("TIMER START")
+    }
 })
 
 // Stopwatch Function
