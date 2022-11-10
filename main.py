@@ -13,6 +13,7 @@ from helpers import apology, login_required
 import random
 
 import time
+from datetime import datetime
 
 # Configure application
 app = Flask(__name__)
@@ -52,7 +53,15 @@ def after_request(response):
 
 
 @app.route('/')
+@login_required
 def index():
+    """Show portfolio page"""
+    acc_id = session["user_id"]
+    if acc_id != None:
+        # Update current stocks price to update total value
+        # Get the user data in db
+        user_db = db.execute("SELECT * FROM portfolio WHERE pofo_id = ?", acc_id)
+
     return render_template("layout.html")
 
 
@@ -158,26 +167,13 @@ def register():
 
 
 ################################################# Game #################################################
-# @app.route('/game', methods=['GET', 'POST'])
-# def game_index():
-#     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-#     random_list = random.sample(num_list, 10)
-#     counter = 9
-#     return render_template("game.html")
-#
-# @app.route('/process', methods=['POST'])
-# def process():
-#     test = 12
-#     if request.form.get('low'):
-#         low = int(request.form['low'])
-#         print(f"getting low: {low}")
-#         # return jinja_question=question
-#         return render_template("game.html", jinja_question=test)
-
-
-
 @app.route('/game', methods=['GET', 'POST'])
+@login_required
 def game_index():
+
+    acc_id = session["user_id"]
+    
+
     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
 
@@ -219,8 +215,32 @@ def game_index():
             number_R = 1
 
             message = (f"Finished! Your time is: {total_time} seconds")
+            date_time = datetime.now()
             print("Stopwatch: ", total_time)
             # Show a game end message and Reset the num_R to 1
+
+
+            ##### SQL part #####
+            # SQL only save 1 best_time record
+            # Check if the best_time is exists in db or NOT
+            best_time_held = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT symbol FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+
+            # If the best_time NOT exists, use SQL INSERT to add a record
+            if len(best_time_held) == 0:
+                db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                print("Added SQL with no data in SQL")
+            # If the time_record exists, update the data
+            # Use SQL update
+            else:
+                # Compare the best_time in SQL with the new total_time
+                if best_time_held > total_time:
+                    # Update portfolio db
+                    db.execute("UPDATE profile SET time = ?, best_time = ? WHERE symbol = ?")
+                    print("Added SQL")
+                else:
+                    pass
+
+
             return jsonify({'endGame': message, 'js_display_number': number_R})                
 
             # else counter < 10:
@@ -236,6 +256,16 @@ def game_index():
         else:
             print("Wrong: ", guess)
             pass
+
+
+
+
+
+
+        # best_time_db = db.execute("SELECT best_time FROM portfolio WHERE id = ?", acc_id)
+
+
+
 
     return render_template("game.html")
 
