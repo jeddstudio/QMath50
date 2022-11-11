@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Ultimate Speedrun
+{% endblock %}
+
+
+{% block main %}
+    <div>
+        <div class="App-module_game__NSc-J">
+            <div class="Board-module_boardContainer__cKb-C" style="overflow: unset;">
+                <div>
+                    <h1 id="display_num_L" style="font-size:10vw">?</h1>
+                </div>
+                <div class="center">
+                    <h1 style="font-size:10vw">&nbsp; × &nbsp;</h1>
+                </div>
+                <div>
+                    <h1 id="display_num_R" style="font-size:10vw" >1</h1>
+                </div>
+
+            </div>
+        </div>
+
+<!--         Number L Selector-->
+        <div class="number_L" style="big_number">
+            <nav aria-label="Page navigation example" id="displayNumber_L">
+
+            <!-- Number L Selector Propmt -->
+            <footer id="numLPrompt" class="small text-center text-muted">Multiplication of 2-19, Randomly, 10 questions in total</footer>    
+            <!-- Play again Popup Propmt -->
+            <footer id="playAgainPrompt" class="small text-center text-muted" style="display:none;">Play again</footer>
+
+              <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item"><a class="page-link" data-value="5" href="javascript:void(0);">Ultimate Speed Run</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- old_ver stopwatch -->
+    <!-- <div id="timeContainer">
+        <div id="timeDisplay">00:00:00</div>
+    </div> -->
+
+    <!-- Stopwatch with mseconds -->
+    <!-- <div id="timeContainer">
+        <p><span id="seconds">00</span>:<span id="ms_sec" name="html_ms_sec">00</span></p>
+    </div> -->
+
+
+    <!-- Popup a message when complete -->
+    <div class="col-sm-12 mt-3">
+        <div id="GuessAlert" class="alert alert-dark" role="alert" style="display:none;"></div>
+    </div>
+
+    <footer id="inputPrompt" class="small text-center text-muted" style="display:none;">Input a number and press ENTER key</footer>
+    <form id="setForm">
+        <div class="mb-3">
+            <input id="guess" class="form-control mx-auto w-auto" type="number" autocomplete="off" autofocus disabled>
+        </div>
+        <!-- <button id="resetBtn" class="btn btn-outline-dark timerBtn">Reset</button> -->
+    </form>
+
+
+
+{% endblock %}
+
