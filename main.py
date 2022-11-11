@@ -55,12 +55,12 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
-    """Show portfolio page"""
+    """Show profile page"""
     acc_id = session["user_id"]
     if acc_id != None:
         # Update current stocks price to update total value
         # Get the user data in db
-        user_db = db.execute("SELECT * FROM portfolio WHERE pofo_id = ?", acc_id)
+        user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
 
     return render_template("layout.html")
 
@@ -173,26 +173,42 @@ def game_index():
 
     acc_id = session["user_id"]
     
-
+    
     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
-
+    global number_L
+    global start_time
+    global number_R
+    global end_time
+    global counter
 
     # Get number_L from form.js
     if request.args.get('number_L'):
-        global number_L
 
-        number_L = int(request.args.get('number_L'))
-        return jsonify({'js_number_L': number_L})
+        print("start_time", start_time)
+        if start_time != 0 and number_R > 1:
+            number_R = 1
+            start_time = 0
+            end_time = 0
+            counter = 1
+            print("I m here start > 0")
+            print("number_R", number_R)
+            number_L = int(request.args.get('number_L'))
+            return jsonify({'js_number_L': number_L})
+        else:
+            print("I m here start > 0")
+            number_L = int(request.args.get('number_L'))
+            return jsonify({'js_number_L': number_L})
 
 
     # When user input a number and press Enter
     # Get guess from form.js
     if request.form.get('js_guess'):
-        global counter
-        global number_R
-        global start_time
-        global end_time
+        
+        
+        
+        
+        
 
         answer = number_L * number_R
         guess = int(request.form['js_guess'])
@@ -201,68 +217,82 @@ def game_index():
         if counter == 1:
             start_time = time.time()
             print("START: ", start_time)
-        
+            # Here have a bug, when user playing the game and not finish and F5 the page, start_time has no refresh
 
-        # When the last answer is correct 
+
+        # When the last answer is correct, Game End 
         if answer == guess and counter == 10:
             # Calculating Time
             end_time = time.time()
             print("END: ", end_time)
-            total_time = "{:.3f}".format((end_time - start_time))
+            total_time = float("{:.3f}".format((end_time - start_time)))
             print(f"time_lapsed:{end_time} - {start_time}")
             # Reset the Global values
             counter = 1
             number_R = 1
 
-            message = (f"Finished! Your time is: {total_time} seconds")
+            message = (f"Finished! \n Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
             # Show a game end message and Reset the num_R to 1
 
 
-            ##### SQL part #####
-            # SQL only save 1 best_time record
-            # Check if the best_time is exists in db or NOT
-            best_time_held = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT symbol FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+            # ##### SQL part #####
+            # # SQL only save 1 best_time record
+            # # Check if the best_time is exists in db or NOT
+            # data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+            # print(data_check)
+            # # 這裡只是用於檢查是否已有 data 存在，它會 return [{'best_time': 4.441}, {'best_time': 9.717}]
+            # # 所以如果它 len() == 0，即是沒有資料
 
-            # If the best_time NOT exists, use SQL INSERT to add a record
-            if len(best_time_held) == 0:
-                db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
-                print("Added SQL with no data in SQL")
-            # If the time_record exists, update the data
-            # Use SQL update
-            else:
-                # Compare the best_time in SQL with the new total_time
-                if best_time_held > total_time:
-                    # Update portfolio db
-                    db.execute("UPDATE profile SET time = ?, best_time = ? WHERE symbol = ?")
-                    print("Added SQL")
-                else:
-                    pass
+            # # If the best_time NOT exists, use SQL INSERT to add a record
+            # if len(data_check) == 0:
+            #     db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+            #     print("Added SQL with no data in SQL")
+            # # If the time_record exists, update the data
+            # # Use SQL update
+            # else:
+            #     ##### Call 當前最佳時間
+            #     best_time_held_db = db.execute("SELECT best_time FROM profile WHERE symbol = ?", number_L)
+            #     best_time_held = float(best_time_held_db[0]["best_time"])
+            #     print(f"best time found {best_time_held}")
 
+            #     print(type(best_time_held))
+            #     print(type(total_time))
+            #     print(f"Your best time in {number_L}: {best_time_held}")
+
+            #     #######
+            #     ### 完成了下面Compare 當前 與 database 
+
+            #     # Compare the best_time in SQL with the new total_time
+            #     if best_time_held > total_time:
+            #         # Update profile db
+            #         db.execute("UPDATE profile SET time = ?, best_time = ? WHERE symbol = ?")
+            #         print("Added SQL")
+            #     else:
+            #         pass
+            # #### SQL part #####
 
             return jsonify({'endGame': message, 'js_display_number': number_R})                
 
-            # else counter < 10:
+        # else counter < 10: Keep running the game
         elif answer == guess and counter < 10:
             number_R = num_list[counter]
             answer = number_L * number_R
             counter += 1
-            print(counter)
+            print("Counter: ", counter)
             # Refresh a new number to page
             return jsonify({'js_display_number': number_R})
        
         # if the guess is wrong, just lets user keep guessing
         else:
-            print("Wrong: ", guess)
+            print("Wrong: ", guess, "Answer: ", answer, "=", number_L, number_R)
             pass
 
 
 
 
-
-
-        # best_time_db = db.execute("SELECT best_time FROM portfolio WHERE id = ?", acc_id)
+        # best_time_db = db.execute("SELECT best_time FROM profile WHERE id = ?", acc_id)
 
 
 
