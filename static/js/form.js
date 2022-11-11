@@ -56,7 +56,6 @@ $('#setForm').submit(function(e) {
 // L number selector
 $(document).click(function(){
     $('.page-link').click(function(){
-        console.log("111111")
         $.ajax({
             url:'',
             type:'get',

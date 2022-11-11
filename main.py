@@ -173,9 +173,9 @@ def game_index():
 
     acc_id = session["user_id"]
     
-    
     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
+
     global number_L
     global start_time
     global number_R
@@ -185,18 +185,16 @@ def game_index():
     # Get number_L from form.js
     if request.args.get('number_L'):
 
-        print("start_time", start_time)
+        # If the user presses the refresh button in the middle of the game, it resets all Global value
         if start_time != 0 and number_R > 1:
             number_R = 1
             start_time = 0
             end_time = 0
             counter = 1
-            print("I m here start > 0")
-            print("number_R", number_R)
             number_L = int(request.args.get('number_L'))
             return jsonify({'js_number_L': number_L})
+        # If not, normally to running the game
         else:
-            print("I m here start > 0")
             number_L = int(request.args.get('number_L'))
             return jsonify({'js_number_L': number_L})
 
@@ -204,21 +202,14 @@ def game_index():
     # When user input a number and press Enter
     # Get guess from form.js
     if request.form.get('js_guess'):
-        
-        
-        
-        
-        
 
         answer = number_L * number_R
         guess = int(request.form['js_guess'])
 
-        # Save the start time when user input first answer
+        # Save the start time when user input(and press Enter) first answer
         if counter == 1:
             start_time = time.time()
             print("START: ", start_time)
-            # Here have a bug, when user playing the game and not finish and F5 the page, start_time has no refresh
-
 
         # When the last answer is correct, Game End 
         if answer == guess and counter == 10:
@@ -237,41 +228,36 @@ def game_index():
             # Show a game end message and Reset the num_R to 1
 
 
-            # ##### SQL part #####
-            # # SQL only save 1 best_time record
-            # # Check if the best_time is exists in db or NOT
-            # data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
-            # print(data_check)
-            # # 這裡只是用於檢查是否已有 data 存在，它會 return [{'best_time': 4.441}, {'best_time': 9.717}]
-            # # 所以如果它 len() == 0，即是沒有資料
+            ############### SQL part ###############
+            # SQL only save the best_time record when the current time faster than SQL's fastest record
 
-            # # If the best_time NOT exists, use SQL INSERT to add a record
-            # if len(data_check) == 0:
-            #     db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
-            #     print("Added SQL with no data in SQL")
-            # # If the time_record exists, update the data
-            # # Use SQL update
-            # else:
-            #     ##### Call 當前最佳時間
-            #     best_time_held_db = db.execute("SELECT best_time FROM profile WHERE symbol = ?", number_L)
-            #     best_time_held = float(best_time_held_db[0]["best_time"])
-            #     print(f"best time found {best_time_held}")
+            # Check if the best_time is exists in db or NOT
+            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+            # This is to check if data already exists. It will return [{'best_time': 4.441}, {'best_time': 9.717}]
+            # So if it len(data_check) == 0, it means there is no data
 
-            #     print(type(best_time_held))
-            #     print(type(total_time))
-            #     print(f"Your best time in {number_L}: {best_time_held}")
+            # If the best_time does NOT exist, use SQL INSERT to add a record
+            if len(data_check) == 0:
+                db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                print(f"Added SQL with no data in SQL: {total_time}s")
+            
+            # If the time_record exists, update the data
+            else:
+                # Call out the best time in SQL, using MIN() method of SQL
+                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND symbol = ?", acc_id, number_L)
+                best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
+                print(f"Your time is: {total_time}")
+                print(f"Best time found. Your best time in {number_L}: {best_time_held}")
 
-            #     #######
-            #     ### 完成了下面Compare 當前 與 database 
-
-            #     # Compare the best_time in SQL with the new total_time
-            #     if best_time_held > total_time:
-            #         # Update profile db
-            #         db.execute("UPDATE profile SET time = ?, best_time = ? WHERE symbol = ?")
-            #         print("Added SQL")
-            #     else:
-            #         pass
-            # #### SQL part #####
+                # Compare the best_time in SQL with the new total_time
+                if best_time_held > total_time:
+                    # Update profile db
+                    db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                    print(f"New record!!!!!! {total_time}s")
+                    print("Added to SQL")
+                else:
+                    pass
+            ############### SQL part ###############
 
             return jsonify({'endGame': message, 'js_display_number': number_R})                
 
