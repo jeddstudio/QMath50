@@ -232,19 +232,19 @@ def game_basic():
             # SQL only save the best_time record when the current time faster than SQL's fastest record
 
             # Check if the best_time is exists in db or NOT
-            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND game_type = ?)", acc_id, number_L)
             # This is to check if data already exists. It will return [{'best_time': 4.441}, {'best_time': 9.717}]
             # So if it len(data_check) == 0, it means there is no data
 
             # If the best_time does NOT exist, use SQL INSERT to add a record
             if len(data_check) == 0:
-                db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                 print(f"Added SQL with no data in SQL: {total_time}s")
             
             # If the time_record exists
             else:
                 # Call out the best time in SQL, using MIN() method of SQL
-                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND symbol = ?", acc_id, number_L)
+                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
                 best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
                 print(f"Your time is: {total_time}")
                 print(f"Best time found. Your best time in {number_L}: {best_time_held}")
@@ -252,7 +252,7 @@ def game_basic():
                 # Compare the best_time in SQL with the new total_time
                 if best_time_held > total_time:
                     # INSERT a new data to db
-                    db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                    db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                     print(f"New record!!!!!! {total_time}s")
                     print("Added to SQL")
                 else:
@@ -343,19 +343,19 @@ def game_advanced():
             # SQL only save the best_time record when the current time faster than SQL's fastest record
 
             # Check if the best_time is exists in db or NOT
-            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND symbol = ?)", acc_id, number_L)
+            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND game_type = ?)", acc_id, number_L)
             # This is to check if data already exists. It will return [{'best_time': 4.441}, {'best_time': 9.717}]
             # So if it len(data_check) == 0, it means there is no data
 
             # If the best_time does NOT exist, use SQL INSERT to add a record
             if len(data_check) == 0:
-                db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                 print(f"Added SQL with no data in SQL: {total_time}s")
             
             # If the time_record exists
             else:
                 # Call out the best time in SQL, using MIN() method of SQL
-                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND symbol = ?", acc_id, number_L)
+                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
                 best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
                 print(f"Your time is: {total_time}")
                 print(f"Best time found. Your best time in {number_L}: {best_time_held}")
@@ -363,7 +363,7 @@ def game_advanced():
                 # Compare the best_time in SQL with the new total_time
                 if best_time_held > total_time:
                     # INSERT a new data to db
-                    db.execute("INSERT INTO profile (pofo_id, time, symbol, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                    db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                     print(f"New record!!!!!! {total_time}s")
                     print("Added to SQL")
 
