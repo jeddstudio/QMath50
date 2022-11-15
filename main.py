@@ -57,17 +57,12 @@ def after_request(response):
 def index():
     """Show profile page"""
     acc_id = session["user_id"]
-
     if acc_id != None:
         # Update current stocks price to update total value
         # Get the user data in db
-        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
-        username = username_db[0]["username"]
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
-        print(username)
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
 
-    return render_template("layout.html", jinja_username=username)
+    return render_template("layout.html")
 
 
 ################################################# LOGIN #################################################
