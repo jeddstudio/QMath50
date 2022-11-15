@@ -214,7 +214,7 @@ def game_basic():
         # Save the start time when user input(and press Enter) first answer
         if counter == 1:
             start_time = time.time()
-            print("START: ", start_time)
+            print("1 START: ", start_time)
 
         # When the last answer is correct, Game End 
         if answer == guess and counter == 10:
@@ -226,9 +226,6 @@ def game_basic():
             # Reset the Global values
             counter = 1
             number_R = 1
-
-            # Show a game end message and Reset the num_R to 1
-            # message = (f"Finished! Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
             
@@ -261,6 +258,8 @@ def game_basic():
                     db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                     print(f"New record!!!!!! {total_time}s")
                     print("Added to SQL")
+
+                    # Show a game end message
                     message = (f"New record! {total_time} seconds")
                 else:
                     message = (f"Your time is: {total_time} seconds")
@@ -312,24 +311,26 @@ def game_advanced():
             end_time = 0
             counter = 1
             number_L = int(request.args.get('number_L'))
+            print("agame1")
             return jsonify({'js_number_L': number_L})
         # If not, normally to running the game
         else:
             number_L = int(request.args.get('number_L'))
+            print("agame2")
             return jsonify({'js_number_L': number_L})
 
 
     # When user input a number and press Enter
     # Get guess from form.js
-    if request.form.get('js_guess'):
+    if request.form.get('js_guess_adgame'):
 
         answer = number_L * number_R
-        guess = int(request.form['js_guess'])
+        guess = int(request.form['js_guess_adgame'])
 
         # Save the start time when user input(and press Enter) first answer
         if counter == 1:
             start_time = time.time()
-            print("START: ", start_time)
+            print("2 START: ", start_time)
 
         # When the last answer is correct, Game End 
         if answer == guess and counter == 10:
@@ -341,11 +342,8 @@ def game_advanced():
             # Reset the Global values
             counter = 1
             number_R = 1
-
-            message = (f"Finished! \n Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
-            # Show a game end message and Reset the num_R to 1
 
 
             ############### SQL part ###############
@@ -375,7 +373,11 @@ def game_advanced():
                     db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                     print(f"New record!!!!!! {total_time}s")
                     print("Added to SQL")
+
+                    # Show a game end message
+                    message = (f"New record! {total_time} seconds")
                 else:
+                    message = (f"Your time is: {total_time} seconds")
                     pass
             ############### SQL part ###############
 
@@ -409,6 +411,8 @@ def game_speedrun():
     
     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
+    # Generate a number in 2-9
+    L_num_random = random.randint(2,9)
 
     global number_L
     global start_time
@@ -418,32 +422,36 @@ def game_speedrun():
 
     # Get number_L from form.js
     if request.args.get('number_L'):
-
         # If the user presses the refresh button in the middle of the game, it resets all Global value
         if start_time != 0 and number_R > 1:
             number_R = 1
             start_time = 0
             end_time = 0
             counter = 1
-            number_L = int(request.args.get('number_L'))
+            # number_L = int(request.args.get('number_L'))
+            number_L = L_num_random
+            print("runing 1")
             return jsonify({'js_number_L': number_L})
         # If not, normally to running the game
         else:
-            number_L = int(request.args.get('number_L'))
+            # number_L = int(request.args.get('number_L'))
+            number_L = L_num_random
+            print("runing 2")
             return jsonify({'js_number_L': number_L})
+            
 
 
     # When user input a number and press Enter
     # Get guess from form.js
     if request.form.get('js_guess'):
-
         answer = number_L * number_R
         guess = int(request.form['js_guess'])
 
         # Save the start time when user input(and press Enter) first answer
         if counter == 1:
             start_time = time.time()
-            print("START: ", start_time)
+            print("3. START: ", start_time)
+            print("runing 3")
 
         # When the last answer is correct, Game End 
         if answer == guess and counter == 10:
@@ -459,6 +467,7 @@ def game_speedrun():
             message = (f"Finished! \n Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
+            print("runing 4")
             # Show a game end message and Reset the num_R to 1
 
 
@@ -497,10 +506,13 @@ def game_speedrun():
 
         # else counter < 10: Keep running the game
         elif answer == guess and counter < 10:
-            number_R = num_list[counter]
+            number_R = random_list[counter]
+            
+            print(number_R, counter, number_L)
             answer = number_L * number_R
             counter += 1
             print("Counter: ", counter)
+            print("runing 5")
             # Refresh a new number to page
             return jsonify({'js_display_number': number_R})
        
