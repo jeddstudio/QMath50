@@ -222,8 +222,7 @@ def game_basic():
             counter = 1
             number_R = 1
 
-            # Show a game end message and Reset the num_R to 1
-            # message = (f"Finished! Your time is: {total_time} seconds")
+            message = (f"Finished! \n Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
             # Show a game end message and Reset the num_R to 1
