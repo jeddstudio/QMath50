@@ -51,19 +51,80 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
+################################################# INDEX #################################################
 @app.route('/')
 @login_required
 def index():
     """Show profile page"""
     acc_id = session["user_id"]
     if acc_id != None:
-        # Update current stocks price to update total value
+        # Show user name on left bar
         # Get the user data in db
         username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
         username = username_db[0]["username"]
 
-    return render_template("layout.html", jinja_username=username)
+        user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
+
+        def get_best_time(user_db):
+
+            best_time_list = []
+
+            for data in range(2, 20):
+                temp_dict = data
+
+                best_time_db = db.execute("SELECT game_type, MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, data)
+                
+                # if best_time_list[data][0]["MIN(best_time)"] != None:
+                
+                best_time_list.append(best_time_db)
+            return best_time_list
+            
+        contents = get_best_time(user_db)
+        print(contents)
+        # print(best_time_list)
+        # [[{'game_type': '2', 'MIN(best_time)': 4.045}], [{'game_type': '3', 'MIN(best_time)': 8.752}], [{'game_type': '4', 'MIN(best_time)': 8.797}], [{'game_type': '5', 'MIN(best_time)': 10.711}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': '11', 'MIN(best_time)': 5.702}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}], [{'game_type': None, 'MIN(best_time)': None}]]
+
+        # print()
+        # print(best_time_list[0])
+        # print("TYPE", type(best_time_list))
+        # print(best_time_list[0][0]["game_type"])
+        # print(best_time_list[0][0]["MIN(best_time)"])
+        # print()
+
+        # best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
+        # best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
+        # print(f"Your time is: {total_time}")
+        # print(f"Best time found. Your best time in {number_L}: {best_time_held}")
+
+
+
+
+        # best_time_list = []
+        # for i in range(19):
+        #     user_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, i)
+        #     best_time_list.append(user_db)
+        # user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
+
+
+        # print(best_time_list)
+
+        # def get_best_time(user_db):
+        #     # Create a NEW_LIST for display
+        #     latest_update = []
+
+        #     for data in user_db:
+        #     # Tempoary dict
+        #         temp_dict = data
+        #         game_type = data["game_type"]
+        #         best_time = data["best_time"]
+
+
+
+
+
+
+
+    return render_template("index.html", jinja_username=username, jinja_contents=contents)
 
 
 ################################################# LOGIN #################################################
@@ -173,7 +234,12 @@ def register():
 def game_basic():
 
     acc_id = session["user_id"]
-    
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+
     num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     random_list = random.sample(num_list, 9)
 
@@ -246,6 +312,8 @@ def game_basic():
                 # Call out the best time in SQL, using MIN() method of SQL
                 best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
                 best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
+                print(f"TYPE {type(best_time_held_db)}")
+                print("best_time_held_db", best_time_held_db)
                 print(f"Your time is: {total_time}")
                 print(f"Best time found. Your best time in {number_L}: {best_time_held}")
 
@@ -276,7 +344,7 @@ def game_basic():
             print("Wrong: ", guess, "Answer: ", answer, "=", number_L, number_R)
             pass
 
-    return render_template("game.html")
+    return render_template("game.html", jinja_username=username)
 
 
 ################################################# Advanced Game #################################################
@@ -366,7 +434,7 @@ def game_advanced():
                     # INSERT a new data to db
                     db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
                     print(f"New record!!!!!! {total_time}s")
-                    print("Added to SQL")
+
 
                     # Show a game end message
                     message = (f"New record! {total_time} seconds")
@@ -394,14 +462,14 @@ def game_advanced():
     return render_template("advancedgame.html")
 
 
-
+################################################# Basic Table #################################################
 @app.route('/basic_table', methods=['GET', 'POST'])
 @login_required
 def basic_table():
 
     return render_template("basictable.html")
 
-
+################################################# Advanced Table #################################################
 @app.route('/advanced_table', methods=['GET', 'POST'])
 @login_required
 def advanced_table():

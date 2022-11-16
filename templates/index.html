@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+
+
+    {% for content in jinja_contents %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card border-dark mb-3" style="max-width: 18rem;">
+                    <div class="card-header">2 × 2</div>
+                    <div class="card-body text-dark">
+                    <h5 class="card-title">Best Time:</h5>
+                    <p class="card-text">{{ content.best_time }}</p>
+                </div>
+             </div>
+        </div>
+    {% endfor %}
+
+    <!-- <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                <div class="card-header">2 × 2</div>
+                <div class="card-body text-dark">
+                  <h5 class="card-title">Best Time:</h5>
+                  <p class="card-text">12.365s</p>
+                </div>
+              </div>
+        </div>
+        <div class="col">
+            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                <div class="card-header">2 × 2</div>
+                <div class="card-body text-dark">
+                  <h5 class="card-title">Best Time:</h5>
+                  <p class="card-text">12.365s</p>
+                </div>
+              </div>
+        </div>
+      </div> -->
+
+{% endblock %}
