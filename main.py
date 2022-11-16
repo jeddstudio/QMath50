@@ -60,9 +60,10 @@ def index():
     if acc_id != None:
         # Update current stocks price to update total value
         # Get the user data in db
-        user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
 
-    return render_template("layout.html")
+    return render_template("layout.html", jinja_username=username)
 
 
 ################################################# LOGIN #################################################
@@ -221,8 +222,6 @@ def game_basic():
             # Reset the Global values
             counter = 1
             number_R = 1
-
-            message = (f"Finished! \n Your time is: {total_time} seconds")
             date_time = datetime.now()
             print("Stopwatch: ", total_time)
             # Show a game end message and Reset the num_R to 1
@@ -239,6 +238,7 @@ def game_basic():
             # If the best_time does NOT exist, use SQL INSERT to add a record
             if len(data_check) == 0:
                 db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                message = (f"Your time is: {total_time} seconds")
                 print(f"Added SQL with no data in SQL: {total_time}s")
             
             # If the time_record exists
@@ -253,9 +253,10 @@ def game_basic():
                 if best_time_held > total_time:
                     # INSERT a new data to db
                     db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                    message = (f"New Record! {total_time} seconds")
                     print(f"New record!!!!!! {total_time}s")
-                    print("Added to SQL")
                 else:
+                    message = (f"Your time is: {total_time} seconds")
                     pass
             ############### SQL part ###############
 
@@ -394,6 +395,18 @@ def game_advanced():
 
 
 
+@app.route('/basic_table', methods=['GET', 'POST'])
+@login_required
+def basic_table():
+
+    return render_template("basictable.html")
+
+
+@app.route('/advanced_table', methods=['GET', 'POST'])
+@login_required
+def advanced_table():
+
+    return render_template("advancedtable.html")
 
 
 
