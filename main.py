@@ -73,39 +73,42 @@ def index():
 
         # Loop 2-19, range is a counter for db.execute
         for data in range(2,20):
-            # Set a dict to hold the processed data
-            temp_dict = {}
+            if data == 10:
+                pass
+            else:
+                # Set a dict to hold the processed data
+                temp_dict = {}
 
-            # Get best_time of the game_type 1 by 1
-            best_time_db = db.execute("SELECT game_type, MIN(best_time), time FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, data)
+                # Get best_time of the game_type 1 by 1
+                best_time_db = db.execute("SELECT game_type, MIN(best_time), time FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, data)
 
-            # best_time_db will look like:
-            # [{'game_type': '2', 'MIN(best_time)': 4.045}]
-            
-            # Grab the data only from [{'game_type': '2', 'MIN(best_time)': 4.045}]
-            game_type = best_time_db[0]["game_type"]
-            # game_type = 2
-            best_time = best_time_db[0]["MIN(best_time)"]
-            # best_time = 4.045
-            record_date_time = best_time_db[0]["time"]
-            # record_date_time = 2022-11-15 09:54:32
+                # best_time_db will look like:
+                # [{'game_type': '2', 'MIN(best_time)': 4.045}]
+                
+                # Grab the data only from [{'game_type': '2', 'MIN(best_time)': 4.045}]
+                game_type = best_time_db[0]["game_type"]
+                # game_type = 2
+                best_time = best_time_db[0]["MIN(best_time)"]
+                # best_time = 4.045
+                record_date_time = best_time_db[0]["time"]
+                # record_date_time = 2022-11-15 09:54:32
 
-            # Put these into temp_dict and create a key ["game_type"] and ["best_time"]
-            temp_dict["game_type"] = game_type
-            temp_dict["best_time"] = best_time
-            temp_dict["time"] = record_date_time
-            # temp_dict will look like:
-            # {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'}
-            
-            # game_type is for display on the webpage like 2 × 2 using Jinja
-            if temp_dict["game_type"] == None:
-                temp_dict["game_type"] = data
-            # If best_time not None, add a unit "s" for display on webpage
-            if temp_dict["best_time"] != None:
-                temp_dict["best_time"] = str(best_time) + "s"
+                # Put these into temp_dict and create a key ["game_type"] and ["best_time"]
+                temp_dict["game_type"] = game_type
+                temp_dict["best_time"] = best_time
+                temp_dict["time"] = record_date_time
+                # temp_dict will look like:
+                # {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'}
+                
+                # game_type is for display on the webpage like 2 × 2 using Jinja
+                if temp_dict["game_type"] == None:
+                    temp_dict["game_type"] = data
+                # If best_time not None, add a unit "s" for display on webpage
+                if temp_dict["best_time"] != None:
+                    temp_dict["best_time"] = str(best_time) + "s"
 
-            # Add {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'} into the list
-            best_time_list.append(temp_dict)
+                # Add {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'} into the list
+                best_time_list.append(temp_dict)
 
         # Get a list of dictionaries like:
         # [{'game_type': '2', 'best_time': '4.045s', 'time': '2022-11-15 09:54:32'}, {'game_type': '3', 'best_time': '8.752s', 'time': '2022-11-16 13:10:46'}, ....]
