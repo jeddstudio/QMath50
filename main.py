@@ -63,16 +63,13 @@ def index():
         username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
         username = username_db[0]["username"]
 
-
-        # Call user db from SQL
-        # user_db = db.execute("SELECT * FROM profile WHERE pofo_id = ?", acc_id)
-        # print(user_db)
        
         # Set a list for export data to Jinja
         best_time_list = []
 
         # Loop 2-19, range is a counter for db.execute
         for data in range(2,20):
+            # No need 10 × 10 in the game
             if data == 10:
                 pass
             else:
@@ -107,7 +104,7 @@ def index():
                 if temp_dict["best_time"] != None:
                     temp_dict["best_time"] = str(best_time) + "s"
 
-                # Add {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'} into the list
+                # Add temp_dict: {'game_type': '2', 'best_time': 4.045, 'time': '2022-11-15 09:54:32'} into the best_time_list
                 best_time_list.append(temp_dict)
 
         # Get a list of dictionaries like:
@@ -118,6 +115,91 @@ def index():
 
     else:
         return render_template("login.html")
+
+
+
+################################################# Rank #################################################
+@app.route('/rank')
+@login_required
+def rank():
+    """Show profile page"""
+    acc_id = session["user_id"]
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+
+    
+        # Set a list for export data to Jinja
+        best_time_list = []
+
+        # Loop 2-19, range is a counter for db.execute
+        for data in range(2,20):
+            # No need 10 × 10 in the game
+            if data == 10:
+                pass
+            else:
+                # Set a dict to hold the processed data
+                temp_dict = {}
+
+                # Get best_time of the game_type 1 by 1
+                rank_best_db = db.execute("SELECT game_type, pofo_id, MIN(best_time), time FROM profile WHERE game_type = ?", data)
+                # rank_best_db will look like:
+                # [{'game_type': '2', 'pofo_id': 1, 'MIN(best_time)': 4.045, 'time': '2022-11-15 09:54:32'}]
+                
+                # Grab the id for getting the username from the users table in SQL
+                best_player_id = rank_best_db[0]["pofo_id"]
+                # best_player_id will a number only, e.g. 1, 6
+
+
+                best_player_name = db.execute("SELECT username FROM users WHERE id = ?", best_player_id)
+                # It will look like: [{'username': 'GM_1'}]
+
+                # If there is no data in the Database, None is displayed
+                # Check if the best_player_name = [], it will be true
+                if not best_player_name:
+                    # game_type is for display on the webpage like 2 × 2 using Jinja
+                    game_type = data
+                    # Others data is display for None
+                    player_name = None
+                    best_time = None
+                    record_date_time = None 
+                else:
+                    game_type = rank_best_db[0]["game_type"]
+                    # 9
+                    player_name = best_player_name[0]["username"]
+                    # GM_1
+                    best_time = rank_best_db[0]["MIN(best_time)"]
+                    # 22.494
+                    record_date_time = rank_best_db[0]["time"]
+                    # 2022-11-17 23:00:12
+                
+
+                # Put these into temp_dict and create a key ["game_type"], ["username"], ["best_time"] and ["time"]
+                temp_dict["game_type"] = game_type
+                temp_dict["username"] = player_name
+                temp_dict["best_time"] = best_time
+                temp_dict["time"] = record_date_time
+
+                # If best_time not None, add a unit "s" for display on webpage
+                if temp_dict["best_time"] != None:
+                    temp_dict["best_time"] = str(best_time) + "s"
+                
+                # Add temp_dict: {'game_type': '2', 'username': '111', 'best_time': '4.045s', 'time': '2022-11-15 09:54:32'} into the best_time_list
+                best_time_list.append(temp_dict)
+
+
+        # Get a list of dictionaries like:
+        # [{'game_type': '2', 'username': '111', 'best_time': '4.045s', 'time': '2022-11-15 09:54:32'}, {'game_type': '3', 'username': 'GM_1', 'best_time': '8.539s', 'time': '2022-11-17 22:57:23'},  ....]
+        contents = best_time_list
+
+        return render_template("rank.html", jinja_username=username, jinja_contents=contents)
+
+    else:
+        return render_template("login.html")
+
+
 
 
 ################################################# LOGIN #################################################

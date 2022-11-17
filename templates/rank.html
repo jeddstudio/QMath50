@@ -9,7 +9,7 @@
         <div class="App-module_game__NSc-J">
           <div class="Board-module_boardContainer__cKb-C" style="overflow: unset;">
               <div class="center">
-                  <h1 style="font-size:3vw" id="indexTitle">STATISTICS</h1>
+                  <h1 style="font-size:3vw" id="indexTitle">RANK</h1>
               </div>
           </div>
         </div>
@@ -22,7 +22,7 @@
                   
                     <div class="card-header">{{ content.game_type }} × {{ content.game_type }}</div>
                     <div class="card-body text-dark">
-                      <!-- <p class="card-text">Best Time:</p> -->
+                      <p class="card-text">{{ content.username }}</p>
                       <h5 class="card-title">{{ content.best_time }}</h5>
                       <p class="card-text"><small class="text-muted">{{ content.time }}</small></p>
                     </div>  
