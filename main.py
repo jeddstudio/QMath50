@@ -28,7 +28,7 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///qmath50.db")
-# # Configure CS50 Library to use SQLite database
+# sqlite3 moudel SQL database
 # db_con = SQL.connect("qmath50.db")
 # db = db_con.cursor()
 
@@ -38,10 +38,10 @@ counter = 1
 # The Display number on the page, for calculation
 number_L = 1
 number_R = 1
-
-
 start_time = 0
 end_time = 0
+
+
 
 @app.after_request
 def after_request(response):
@@ -118,13 +118,10 @@ def index():
         #         game_type = data["game_type"]
         #         best_time = data["best_time"]
 
+        return render_template("index.html", jinja_username=username, jinja_contents=contents)
 
-
-
-
-
-
-    return render_template("index.html", jinja_username=username, jinja_contents=contents)
+    else:
+        return render_template("login.html")
 
 
 ################################################# LOGIN #################################################
@@ -353,129 +350,230 @@ def game_basic():
 def game_advanced():
 
     acc_id = session["user_id"]
-    
-    num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    random_list = random.sample(num_list, 9)
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+        num_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        random_list = random.sample(num_list, 9)
 
-    global number_L
-    global start_time
-    global number_R
-    global end_time
-    global counter
+        global number_L
+        global start_time
+        global number_R
+        global end_time
+        global counter
 
-    # Get number_L from form.js
-    if request.args.get('number_L'):
+        # Get number_L from form.js
+        if request.args.get('number_L'):
 
-        # If the user presses the refresh button in the middle of the game, it resets all Global value
-        if start_time != 0 and number_R > 1:
-            number_R = 1
-            start_time = 0
-            end_time = 0
-            counter = 1
-            number_L = int(request.args.get('number_L'))
-            print("agame1")
-            return jsonify({'js_number_L': number_L})
-        # If not, normally to running the game
-        else:
-            number_L = int(request.args.get('number_L'))
-            print("agame2")
-            return jsonify({'js_number_L': number_L})
-
-
-    # When user input a number and press Enter
-    # Get guess from form.js
-    if request.form.get('js_guess_adgame'):
-
-        answer = number_L * number_R
-        guess = int(request.form['js_guess_adgame'])
-
-        # Save the start time when user input(and press Enter) first answer
-        if counter == 1:
-            start_time = time.time()
-            print("2 START: ", start_time)
-
-        # When the last answer is correct, Game End 
-        if answer == guess and counter == 10:
-            # Calculating Time
-            end_time = time.time()
-            print("END: ", end_time)
-            total_time = float("{:.3f}".format((end_time - start_time)))
-            print(f"time_lapsed:{end_time} - {start_time}")
-            # Reset the Global values
-            counter = 1
-            number_R = 1
-            date_time = datetime.now()
-            print("Stopwatch: ", total_time)
-
-
-            ############### SQL part ###############
-            # SQL only save the best_time record when the current time faster than SQL's fastest record
-
-            # Check if the best_time is exists in db or NOT
-            data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND game_type = ?)", acc_id, number_L)
-            # This is to check if data already exists. It will return [{'best_time': 4.441}, {'best_time': 9.717}]
-            # So if it len(data_check) == 0, it means there is no data
-
-            # If the best_time does NOT exist, use SQL INSERT to add a record
-            if len(data_check) == 0:
-                db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
-                print(f"Added SQL with no data in SQL: {total_time}s")
-            
-            # If the time_record exists
+            # If the user presses the refresh button in the middle of the game, it resets all Global value
+            if start_time != 0 and number_R > 1:
+                number_R = 1
+                start_time = 0
+                end_time = 0
+                counter = 1
+                number_L = int(request.args.get('number_L'))
+                print("agame1")
+                return jsonify({'js_number_L': number_L})
+            # If not, normally to running the game
             else:
-                # Call out the best time in SQL, using MIN() method of SQL
-                best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
-                best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
-                print(f"Your time is: {total_time}")
-                print(f"Best time found. Your best time in {number_L}: {best_time_held}")
-
-                # Compare the best_time in SQL with the new total_time
-                if best_time_held > total_time:
-                    # INSERT a new data to db
-                    db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
-                    print(f"New record!!!!!! {total_time}s")
+                number_L = int(request.args.get('number_L'))
+                print("agame2")
+                return jsonify({'js_number_L': number_L})
 
 
-                    # Show a game end message
-                    message = (f"New record! {total_time} seconds")
-                else:
-                    message = (f"Your time is: {total_time} seconds")
-                    pass
-            ############### SQL part ###############
+        # When user input a number and press Enter
+        # Get guess from form.js
+        if request.form.get('js_guess_adgame'):
 
-            return jsonify({'endGame': message, 'js_display_number': number_R})                
-
-        # else counter < 10: Keep running the game
-        elif answer == guess and counter < 10:
-            number_R = num_list[counter]
             answer = number_L * number_R
-            counter += 1
-            print("Counter: ", counter)
-            # Refresh a new number to page
-            return jsonify({'js_display_number': number_R})
-       
-        # if the guess is wrong, just lets user keep guessing
-        else:
-            print("Wrong: ", guess, "Answer: ", answer, "=", number_L, number_R)
-            pass
+            guess = int(request.form['js_guess_adgame'])
 
-    return render_template("advancedgame.html")
+            # Save the start time when user input(and press Enter) first answer
+            if counter == 1:
+                start_time = time.time()
+                print("2 START: ", start_time)
 
+            # When the last answer is correct, Game End 
+            if answer == guess and counter == 10:
+                # Calculating Time
+                end_time = time.time()
+                print("END: ", end_time)
+                total_time = float("{:.3f}".format((end_time - start_time)))
+                print(f"time_lapsed:{end_time} - {start_time}")
+                # Reset the Global values
+                counter = 1
+                number_R = 1
+                date_time = datetime.now()
+                print("Stopwatch: ", total_time)
+
+
+                ############### SQL part ###############
+                # SQL only save the best_time record when the current time faster than SQL's fastest record
+
+                # Check if the best_time is exists in db or NOT
+                data_check = db.execute("SELECT best_time FROM profile WHERE EXISTS(SELECT * FROM profile WHERE pofo_id = ? AND game_type = ?)", acc_id, number_L)
+                # This is to check if data already exists. It will return [{'best_time': 4.441}, {'best_time': 9.717}]
+                # So if it len(data_check) == 0, it means there is no data
+
+                # If the best_time does NOT exist, use SQL INSERT to add a record
+                if len(data_check) == 0:
+                    db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                    print(f"Added SQL with no data in SQL: {total_time}s")
+                
+                # If the time_record exists
+                else:
+                    # Call out the best time in SQL, using MIN() method of SQL
+                    best_time_held_db = db.execute("SELECT MIN(best_time) FROM profile WHERE pofo_id = ? AND game_type = ?", acc_id, number_L)
+                    best_time_held = float(best_time_held_db[0]["MIN(best_time)"])
+                    print(f"Your time is: {total_time}")
+                    print(f"Best time found. Your best time in {number_L}: {best_time_held}")
+
+                    # Compare the best_time in SQL with the new total_time
+                    if best_time_held > total_time:
+                        # INSERT a new data to db
+                        db.execute("INSERT INTO profile (pofo_id, time, game_type, best_time) VALUES (?, ?, ?, ?)", acc_id, date_time, number_L, total_time)
+                        print(f"New record!!!!!! {total_time}s")
+
+
+                        # Show a game end message
+                        message = (f"New record! {total_time} seconds")
+                    else:
+                        message = (f"Your time is: {total_time} seconds")
+                        pass
+                ############### SQL part ###############
+
+                return jsonify({'endGame': message, 'js_display_number': number_R})                
+
+            # else counter < 10: Keep running the game
+            elif answer == guess and counter < 10:
+                number_R = num_list[counter]
+                answer = number_L * number_R
+                counter += 1
+                print("Counter: ", counter)
+                # Refresh a new number to page
+                return jsonify({'js_display_number': number_R})
+        
+            # if the guess is wrong, just lets user keep guessing
+            else:
+                print("Wrong: ", guess, "Answer: ", answer, "=", number_L, number_R)
+                pass
+
+
+        return render_template("advancedgame.html", jinja_username=username)
+    else:
+        return render_template("login.html")
+
+################################################# CHANGE PASSWORD #################################################
+@app.route("/changepassword", methods=["GET", "POST"])
+@login_required
+def changepassword():
+    """Change Password"""
+    ########## Basic Checking ##########
+    # Keep and Know who is logging in
+    acc_id = session["user_id"]
+
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+
+
+        # User reached route via POST (as by submitting a form via POST)
+        if request.method == "POST":
+
+            old_password = request.form.get("old_password")
+            new_password = request.form.get("new_password")
+            new_pw_confirmation = request.form.get("new_pw_confirmation")
+
+            # Ensure username was submitted
+            if not request.form.get("old_password"):
+                return apology("must provide old password", 403)
+
+            # Ensure password was submitted
+            if not request.form.get("new_password"):
+                return apology("must provide new password", 403)
+
+            # Ensure password was submitted
+            if not request.form.get("new_pw_confirmation"):
+                return apology("must confirm password", 403)
+
+            ########## Change Password Feature ##########
+            # Query database
+            rows = db.execute("SELECT * FROM users WHERE id = ?", acc_id)
+            # [{'id': 9, 'username': 'j_01', 'hash': 'pbkdf2:sha256:260000$hrrWfY0MEkZRbZ5a$308f47d9d9268c3c4c9915eb747ec473c77dc9aa57b4a495ef7a66bf402208c7', 'cash': 10000}]
+
+            if not check_password_hash(rows[0]["hash"], old_password):
+                return apology("invalid old password", 403)
+
+            if new_password != new_pw_confirmation:
+                return apology("new password not match", 403)
+
+            else:
+                flash("Password Changed!")
+
+                hash_password = generate_password_hash(new_password)
+
+                db.execute("UPDATE users SET hash = ? WHERE id = ?", hash_password, acc_id)
+
+                return render_template("changepasswordsuccess.html")
+
+        return render_template("changepassword.html", jinja_username=username)
+        # Ensure username exists and password is correct
+
+    else:
+        return render_template("login.html")
+
+
+################################################# About #################################################
+@app.route('/about', methods=['GET', 'POST'])
+@login_required
+def about():
+    acc_id = session["user_id"]
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+
+
+        return render_template("about.html", jinja_username=username)
+
+    else:
+        return render_template("login.html")
 
 ################################################# Basic Table #################################################
 @app.route('/basic_table', methods=['GET', 'POST'])
 @login_required
 def basic_table():
+    acc_id = session["user_id"]
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]
+        
+        return render_template("basictable.html", jinja_username=username)
+    else:
+        return render_template("login.html")
 
-    return render_template("basictable.html")
 
 ################################################# Advanced Table #################################################
 @app.route('/advanced_table', methods=['GET', 'POST'])
 @login_required
 def advanced_table():
+    acc_id = session["user_id"]
+    if acc_id != None:
+        # Show user name on left bar
+        # Get the user data in db
+        username_db = db.execute("SELECT username FROM users WHERE id = ?", acc_id)
+        username = username_db[0]["username"]    
 
-    return render_template("advancedtable.html")
-
+        return render_template("advancedtable.html", jinja_username=username)
+    else:
+        return render_template("login.html")
 
 
 
