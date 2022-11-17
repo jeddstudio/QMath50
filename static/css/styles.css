@@ -32,6 +32,11 @@ nav .navbar-brand
     margin: 2% 0 2%;
 }
 
+#indexTitle {
+    margin: 2% 0 18%;
+}
+
+
 
 /* User answer box hide Arrows */
 /* Chrome, Safari, Edge, Opera */
