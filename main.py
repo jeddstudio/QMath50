@@ -264,7 +264,10 @@ def register():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 400)
+
+            message = (f"must provide username")
+            return jsonify({'usernameprompt': message})  
+            # return apology("must provide username", 400)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
