@@ -36,12 +36,6 @@ nav .navbar-brand
     margin: 2% 0 18%;
 }
 
-.card {
-    margin: 0 auto; /* Added */
-    float: none; /* Added */
-    margin-bottom: 10px; /* Added */
-}
-
 
 
 /* User answer box hide Arrows */
