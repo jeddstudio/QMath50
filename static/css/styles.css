@@ -67,8 +67,8 @@ input[type=number] {
 
 
 
-
-.App-module_game__NSc-J {
+/* .App-module_game__NSc-J */
+.App_game {
     width: 100%;
     max-width: var(--game-max-width);
     margin: 0 auto;
@@ -77,7 +77,8 @@ input[type=number] {
     flex-direction: column;
 }
 
-.Board-module_boardContainer__cKb-C {
+/* .Board-module_boardContainer__cKb-C */
+.boardContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -85,20 +86,21 @@ input[type=number] {
     overflow: hidden;
 }
 
-.Board-module_board__lbzlf {
+/* .Board-module_board__lbzlf */
+/* .Board-module_board__lbzlf {
     display: grid;
     grid-template-rows: repeat(6, 1fr);
     grid-gap: 5px;
     padding: 10px;
     box-sizing: border-box;
-}
+} */
 
-.Nav-module_navIcon__mgXpj {
+/* .Nav-module_navIcon__mgXpj {
     padding-right: 8px;
-}
+} */
 
-
-.AppHeader-module_icon__x7b46 {
+/* .AppHeader-module_icon__x7b46 */
+.AppHeader_icon {
     background: none;
     border: none;
 }
