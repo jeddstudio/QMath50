@@ -1,5 +1,11 @@
 # QMath50
-#### Video Demo: https://youtu.be/1c5HzdXPFuk
+
+## Motivation
+This project was inspired by my son's journey in learning multiplication tables. The fundamental concept behind QMath50 is that basic multiplication (2-9) shouldn't require calculation - it should be muscle memory through practice. This extends to advanced multiplication (11-19) as well, where with enough practice, answers can become instantaneous rather than calculated. This educational need became the perfect opportunity for my CS50 Final Project.
+
+#### Video Demo:
+[![QMath50 Demo](https://img.youtube.com/vi/1c5HzdXPFuk/0.jpg)](https://youtu.be/1c5HzdXPFuk)
+
 #### Description:
 QMath50 is a multiplication practice game that allows users to practice multiplication from 2 to 19 and allows different users to compete on the number of multiplications.
 
@@ -38,6 +44,8 @@ It shows users their best time in each multiplier game.
     - Your best time
     - Date and time of completion
 - Each time you complete a game, it will be updated here in real time
+<img src="doc/images/qmath50_statistics.png" alt="QMath50 Statistics Page" width="800"/>
+
 
 ### Basic Game
 - The basic game is the multiplication of 2 to 9
@@ -64,6 +72,8 @@ It shows users their best time in each multiplier game.
     - When your time is **SLOWER** than your previous best time, the system will report "Your time is: x.xxx seconds".
     - When your time is **FASTER** than your previous best time, the system will display "New record! x.xxx seconds".
 - If the completion time is **FASTER** than before, it will be updated in Statistics immediately.
+<img src="doc/images/qmath50_advanced_game.png" alt="QMath50 Advanced Game" width="800"/>
+
 
 ### Multiplication Table
 - Here are two multiplication tables
